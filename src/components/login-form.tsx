@@ -1,5 +1,6 @@
+"use client";
 import Link from "next/link";
-
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -10,8 +11,28 @@ import {
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { OAuthLogin } from "@/services/services";
 
 export function LoginForm() {
+  const oauthLogin = new OAuthLogin();
+  const loginWithProvider = async (provider: "microsoft" | "google") => {
+    try {
+      if (provider === "microsoft") {
+        const microsoftLoginResp = await oauthLogin.microsoftLogin();
+
+        // TODO: remove after testing
+        console.log("microsoftLoginResponse Is: ");
+        console.log(microsoftLoginResp);
+      } else {
+        const googleLoginResp = await oauthLogin.googleLogin();
+        // TODO: remove after testing
+        console.log("googleLoginResponse Is: ");
+        console.log(googleLoginResp);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
   return (
     <Card className="mx-auto max-w-sm">
       <CardHeader>
@@ -43,17 +64,44 @@ export function LoginForm() {
           <Button type="submit" className="w-full">
             Login
           </Button>
-          <Button variant="outline" className="w-full">
+          <Button
+            variant="outline"
+            className="w-full h-fit"
+            onClick={() => loginWithProvider("microsoft")}
+          >
+            Login with Microsoft{" "}
+            <Image
+              src={"/microsoft_logo.svg"}
+              alt="Microsoft Logo"
+              width={15}
+              height={15}
+            />
+          </Button>
+          <Button
+            variant="outline"
+            className="w-full"
+            onClick={() => loginWithProvider("google")}
+          >
             Login with Google
+            <Image
+              src={"/google.png"}
+              alt="Google Logo"
+              width={15}
+              height={15}
+            />
           </Button>
         </div>
-        <div className="mt-4 text-center text-sm">
-          Don&apos;t have an account?{" "}
-          <Link href="#" className="underline">
-            Sign up
-          </Link>
-        </div>
       </CardContent>
+      <Button
+        // TODO: remove after testing
+        onClick={async () => {
+          const account = await oauthLogin.getAccount();
+          console.log("account Is: ");
+          console.log(account);
+        }}
+      >
+        Get account
+      </Button>
     </Card>
   );
 }

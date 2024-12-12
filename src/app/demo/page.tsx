@@ -1,6 +1,6 @@
 "use client";
 import React, { useRef } from "react";
-import { DemoHeader } from "@/components/header";
+import { DemoHeader } from "@/components/demo-header";
 
 function page() {
   const inputRef = useRef<HTMLInputElement>(null);
