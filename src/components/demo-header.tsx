@@ -11,8 +11,8 @@ export function DemoHeader({
   searchButtonClick,
   aiSearchButtonClick,
 }) {
-  const [isLogin, setIsLogin] = useState<boolean | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean | null>(true);
+  const [isLogin, setIsLogin] = useState<boolean | null>(false); // TODO: change this to false
+  const [isLoading, setIsLoading] = useState<boolean | null>(false); // TODO: change this to true
   const [isPending, setIsPending] = useState<boolean>(false);
 
   const checkLoginStatus = async () => {
@@ -47,12 +47,12 @@ export function DemoHeader({
   };
 
   useEffect(() => {
-    checkLoginStatus();
+    // checkLoginStatus();
   }, [isLogin]);
 
   return (
     <div
-      className={`${inter.className} h-fit flex w-full gap-7 items-center flex-wrap`}
+      className={`${inter.className} h-fit flex gap-7 justify-center items-center flex-wrap mx-14 `}
     >
       {/* TODO: Company name would come here */}
       <div className="bg-[#27272a] w-fit p-4 text-white rounded-md">
