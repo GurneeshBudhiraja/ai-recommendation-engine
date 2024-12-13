@@ -1,14 +1,55 @@
+import { useEffect, useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Search, BrainCircuit } from "lucide-react";
 import Link from "next/link";
 import { inter } from "@/app/fonts";
+import { Auth } from "@/services/auth";
 
 export function DemoHeader({
   inputRef,
   searchButtonClick,
   aiSearchButtonClick,
 }) {
+  const [isLogin, setIsLogin] = useState<boolean | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean | null>(true);
+  const [isPending, setIsPending] = useState<boolean>(false);
+
+  const checkLoginStatus = async () => {
+    setIsLoading(true);
+    try {
+      const auth = new Auth();
+      const isUserLoggedIn = await auth.getAccount();
+      console.log("isUserLoggedIn: ", isUserLoggedIn);
+      if (isUserLoggedIn.status) setIsLogin(true);
+    } catch (error) {
+      if (error instanceof Error)
+        console.log("Error in demo-header.tsx: ", error.message);
+      setIsLogin(false);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const logOut = async () => {
+    try {
+      setIsPending(true);
+      // TODO: remove this after debugging
+      console.log("loggin out");
+      const auth = new Auth();
+      await auth.deleteSession();
+      setIsLogin(false);
+    } catch (error) {
+      console.log("Error while logging out: ", error);
+    } finally {
+      setIsPending(false);
+    }
+  };
+
+  useEffect(() => {
+    checkLoginStatus();
+  }, [isLogin]);
+
   return (
     <div
       className={`${inter.className} h-fit flex w-full gap-7 items-center flex-wrap`}
@@ -53,17 +94,51 @@ export function DemoHeader({
       </div>
 
       {/* Login Button */}
-      <Link
-        href={"/demo/login"}
-        className="focus-visible:outline-none focus-visible:ring-1 ring-white rounded-md "
+      <div
+        className={`${
+          !isLoading ? "opacity-100" : "opacity-0"
+        } transition-all duration-200 ease-in-out`}
       >
-        <Button
-          variant="outline"
-          className="px-6 py-2 text-base text-white border-[#27272a] hover:bg-white/10 active:bg-white/15 h-12 select-none transition-all duration-150 ease-in-out "
-        >
-          Login
-        </Button>
-      </Link>
+        {isLogin ? (
+          <Button
+            variant="outline"
+            className={`inline-flex items-center space-x-2 text-base text-white border-[#27272a] hover:bg-white/10 active:bg-white/15 h-12 select-none transition-all duration-150 ease-in-out`}
+            disabled={isPending}
+            onClick={logOut}
+          >
+            <svg
+              className="h-4 w-4"
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+            >
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+              <polyline points="16 17 21 12 16 7" />
+              <line x1="21" x2="9" y1="12" y2="12" />
+            </svg>
+
+            <span>Logout</span>
+          </Button>
+        ) : (
+          <Link
+            href={"/demo/login"}
+            className="focus-visible:outline-none focus-visible:ring-1 ring-white rounded-md "
+          >
+            <Button
+              variant="outline"
+              className="px-6 py-2 text-base text-white border-[#27272a] hover:bg-white/10 active:bg-white/15 h-12 select-none transition-all duration-150 ease-in-out "
+            >
+              Login
+            </Button>
+          </Link>
+        )}
+      </div>
     </div>
   );
 }

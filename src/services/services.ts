@@ -1,4 +1,4 @@
-import OAuthLogin from "./oauthLogin"
+import { Auth } from "./auth"
 
 
-export { OAuthLogin };
+export { Auth };

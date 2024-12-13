@@ -3,7 +3,6 @@ import React, { useRef } from "react";
 import { DemoHeader } from "@/components/demo-header";
 
 function page() {
-  const inputRef = useRef<HTMLInputElement>(null);
   const searchButtonClick = async () => {
     console.log(inputRef.current?.value);
   };
@@ -12,6 +11,7 @@ function page() {
     console.log(inputRef.current?.value);
     // TODO: will need to expand the search section
   };
+  const inputRef = useRef<HTMLInputElement | null>(null);
   return (
     <div className="min-h-screen mx-14 mt-9 text-white flex">
       <DemoHeader
