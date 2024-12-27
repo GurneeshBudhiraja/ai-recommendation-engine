@@ -7,14 +7,6 @@ const Home = () => {
       <Link href={"/demo"}>
         <Button>Demo Page</Button>
       </Link>{" "}
-      {/* DEBUG: remove this after testing  */}
-      <Button
-        onClick={() => {
-          console.log(process.env.NEXT_PUBLIC_APPWRITE_PROJECT_ID);
-        }}
-      >
-        ENV variable testing
-      </Button>
     </div>
   );
 };
