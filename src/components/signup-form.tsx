@@ -62,12 +62,12 @@ function SignupForm() {
       <Card>
         <CardHeader className="text-center">
           <CardTitle className="text-xl">Sign Up</CardTitle>
-          {error && (
-            <div className="text-red-500 text-center text-sm">{error}</div>
-          )}
           <CardDescription className="text-gray-600 dark:text-gray-400">
             Create an account to get started
           </CardDescription>
+          {error && (
+            <div className="text-red-500 text-center text-sm">{error}</div>
+          )}
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit(signupUser)} className="grid gap-6">
