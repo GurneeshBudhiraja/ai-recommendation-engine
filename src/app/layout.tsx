@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
-import { inter, roboto_mono } from "./fonts";
+import { inter, } from "./fonts";
 import "./globals.css";
+import { cn } from "@/lib/utils";
 
 export const metadata: Metadata = {
   title: "AI Recommendations",
@@ -14,7 +15,9 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`dark antialiased box-border `}>{children}</body>
+      <body className={cn("dark antialiased box-border", inter.className)}>
+        {children}
+      </body>
     </html>
   );
 }

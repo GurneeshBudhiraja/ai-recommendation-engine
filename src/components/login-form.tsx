@@ -1,144 +1,121 @@
 "use client";
-import { useState } from "react";
+import { useForm } from "react-hook-form";
+import axios, { AxiosError, AxiosResponse } from "axios";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import Image from "next/image";
 import { Button } from "@/components/ui/button";
-
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Auth } from "@/services/services";
-import { useRef } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { LoginInfo } from "@/types/appwrite.types";
+import { useState } from "react";
+import { cn } from "@/lib/utils";
 
-export function LoginForm() {
+export default function LoginForm() {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginInfo>();
   const router = useRouter();
-  const emailRef = useRef<HTMLInputElement | null>(null);
-  const passwordRef = useRef<HTMLInputElement | null>(null);
-  const [error, setError] = useState<string | null>("");
-  const auth = new Auth();
-  const loginWithProvider = async (
-    provider: "microsoft" | "google" | "email",
-    credentials?: { email: string; password: string }
-  ) => {
+  const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState<boolean>(false);
+
+  async function loginUser(data: LoginInfo) {
+    console.log("Logging user...");
+    setLoading(true);
+    setError(null);
     try {
-      setError("");
-      if (provider === "microsoft") {
-        const microsoftLoginResp = await auth.microsoftLogin();
-
-        // TODO: remove after testing
-        console.log("microsoftLoginResponse Is: ");
-        console.log(microsoftLoginResp);
-      } else if (provider === "google") {
-        const googleLoginResp = await auth.googleLogin();
-        // TODO: remove after testing
-        console.log("googleLoginResponse Is: ");
-        console.log(googleLoginResp);
-      } else if (provider === "email") {
-        if (
-          !credentials ||
-          !credentials.email.trim() ||
-          !credentials.password.trim()
-        ) {
-          throw new Error("Email and password are required");
+      const loginResponse: AxiosResponse = await axios.post(
+        "/api/v1/auth/login",
+        data,
+        {
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
         }
-        const emailResp = await auth.loginWithEmail(credentials);
-
-        // TODO: remove after testing
-        console.log("emailLoginResponse Is: ");
-        console.log(emailResp);
-        router.push("/demo");
+      );
+      const { success } = loginResponse.data;
+      if (!success) {
+        setError(loginResponse.data.message);
       }
+      router.push("/dashboard");
     } catch (error) {
-      if (error instanceof Error) {
-        console.log(error);
-        setError(error.message);
+      if (error instanceof AxiosError) {
+        console.log("Error in login page", error);
+        setError(error.response?.data.message);
       }
+    } finally {
+      setLoading(false);
+      router.refresh();
     }
-  };
+  }
+
   return (
-    <Card className="mx-auto max-w-sm">
-      <CardHeader>
-        <CardTitle className="text-2xl">Login</CardTitle>
-        <CardDescription>
-          Enter your email below to login to your account
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <div className="grid gap-4">
+    <div className={cn("flex flex-col gap-6")}>
+      <Card>
+        <CardHeader className="text-center">
+          <CardTitle className="text-xl">Welcome back</CardTitle>
           {error && (
-            <div className="w-full bg-red-100 text-red-600 text-center rounded-md p-2 shadow-sm whitespace-break-spaces text-sm ">
-              {error}
-            </div>
+            <div className="text-red-500 text-center text-sm">{error}</div>
           )}
-          <div className="grid gap-2">
-            <Label htmlFor="email">Email</Label>
-            <Input
-              id="email"
-              type="email"
-              defaultValue={"testing1@gmail.com"}
-              placeholder="m@example.com"
-              required
-              ref={emailRef}
-            />
-          </div>
-          <div className="grid gap-2">
-            <div className="flex items-center">
-              <Label htmlFor="password">Password</Label>
-              <Link href="#" className="ml-auto inline-block text-sm underline">
-                Forgot your password?
-              </Link>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit(loginUser)}>
+            {" "}
+            {/* Add onSubmit handler */}
+            <div className="grid gap-6">
+              <div className="grid gap-6">
+                <div className="grid gap-2">
+                  <Label htmlFor="email">Email</Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    placeholder="m@example.com"
+                    {...register("email", { required: "Email is required" })}
+                  />
+                  {errors.email && (
+                    <span className="text-red-500 text-sm">
+                      {errors.email.message}
+                    </span>
+                  )}
+                </div>
+                <div className="grid gap-2">
+                  <div className="flex items-center">
+                    <Label htmlFor="password">Password</Label>
+                  </div>
+                  <Input
+                    id="password"
+                    type="password"
+                    {...register("password", {
+                      required: "Password is required",
+                    })}
+                  />
+                  {errors.password && (
+                    <span className="text-red-500 text-sm">
+                      {errors.password.message}
+                    </span>
+                  )}
+                </div>
+                <Button type="submit" className="w-full" disabled={loading}>
+                  {loading ? "Logging in..." : "Login"}
+                </Button>
+              </div>
+              <div className="text-center text-sm">
+                Don&apos;t have an account?{" "}
+                <Link href="/signup" className="underline underline-offset-4">
+                  Sign up
+                </Link>
+              </div>
             </div>
-            <Input id="password" type="password" required ref={passwordRef} />
-          </div>
-          <Button
-            type="submit"
-            className="w-full"
-            onClick={() => {
-              if (emailRef.current && passwordRef.current) {
-                loginWithProvider("email", {
-                  email: emailRef.current?.value?.trim(),
-                  password: passwordRef.current?.value?.trim(),
-                });
-              }
-            }}
-          >
-            Login
-          </Button>
-          <Button
-            variant="outline"
-            className="w-full h-fit"
-            onClick={() => loginWithProvider("microsoft")}
-          >
-            Login with Microsoft{" "}
-            <Image
-              src={"/microsoft_logo.svg"}
-              alt="Microsoft Logo"
-              width={15}
-              height={15}
-            />
-          </Button>
-          <Button
-            variant="outline"
-            className="w-full"
-            onClick={() => loginWithProvider("google")}
-          >
-            Login with Google
-            <Image
-              src={"/google.png"}
-              alt="Google Logo"
-              width={15}
-              height={15}
-            />
-          </Button>
-        </div>
-      </CardContent>
-    </Card>
+          </form>
+        </CardContent>
+      </Card>
+
+      <div className="text-balance text-center text-xs text-muted-foreground [&_a]:underline [&_a]:underline-offset-4 [&_a]:hover:text-primary  ">
+        By clicking continue, you agree to our <a href="#">Terms of Service</a>{" "}
+        and <a href="#">Privacy Policy</a>.
+      </div>
+    </div>
   );
 }
