@@ -33,7 +33,7 @@ export default function ApiKeyDashboard() {
     };
     setApiKeys([newKey, ...apiKeys]);
     setIsCreateDialogOpen(false);
-  };
+  }; 
 
   const handleDeleteApiKey = (id: string) => {
     setCountAPI((prev) => prev - 1);
