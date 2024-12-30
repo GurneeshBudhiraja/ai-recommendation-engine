@@ -5,12 +5,22 @@ import connectDB from "@/lib/db";
 
 export async function POST(request: NextRequest) {
   try {
-    // checks db connection
-    await connectDB()
-
     const formData = await request.formData();
     const apiName = formData.get('name') as string;
     const userID = formData.get('userid') as string;
+
+    // Checks for the missing fields
+    if (!apiName?.trim() || !userID?.trim()) {
+      return NextResponse.json({
+        success: false,
+        message: "Please provide both name and userID."
+      }, { status: 400 })
+    }
+
+    // checks db connection
+    await connectDB()
+
+
 
     const findDocResponse = await API.findOne({ userid: userID })
     if (findDocResponse?.keys?.length === 3) {
