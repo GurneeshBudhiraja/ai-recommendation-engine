@@ -6,9 +6,9 @@ import { type NextRequest, NextResponse } from "next/server";
 
 export async function GET(request: NextRequest) {
 
-  const queryParams = (request.nextUrl.searchParams)
+  const queryParams = request.nextUrl.searchParams
   const userid = queryParams.get("userid");
-  if (!userid) {
+  if (!userid?.trim()) {
     return NextResponse.json({
       success: false,
       message: "Please provide a valid userid"
