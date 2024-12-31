@@ -16,7 +16,7 @@ export default async function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={cn("dark antialiased box-border", inter.className)}>
+      <body className={cn("light antialiased box-border", inter.className)}>
         <ContextWrapper>{children}</ContextWrapper>
       </body>
     </html>
