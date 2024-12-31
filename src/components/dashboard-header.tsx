@@ -78,6 +78,7 @@ export function DashboardHeader({
                   onClick={async () => {
                     await handleLogout();
                     localStorage.removeItem("keys");
+                    localStorage.removeItem("selectedAPIKey");
                     router.refresh();
                   }}
                 >

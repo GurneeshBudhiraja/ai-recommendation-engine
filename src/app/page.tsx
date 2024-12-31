@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Sidebar } from "@/components/sidebar";
 import { FurnitureTopBar } from "@/components/furniture-top-bar";
 import { ProductGrid } from "@/components/product-grid";
+import HomeHeaderActions from "@/components/home-header-actions";
 
 const Home = () => {
   const [selectedCategory, setSelectedCategory] = useState("furniture");
@@ -19,11 +20,13 @@ const Home = () => {
         setSelectedCategory={setSelectedCategory}
       />
       <div className="flex-1 overflow-auto">
-        <div className="p-8">
-          <h1 className="text-4xl font-extralight mb-8 text-gray-800">
-            Elegant Living
-          </h1>
-
+        <div className="p-8 ">
+          <div className="inline-flex justify-between items-start  w-full ">
+            <h1 className="text-4xl font-extralight mb-8 text-gray-800">
+              Elegant Living
+            </h1>
+            <HomeHeaderActions />
+          </div>
           <div className="mb-6 flex items-center">
             <Input
               type="text"

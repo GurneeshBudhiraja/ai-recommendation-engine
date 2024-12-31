@@ -45,7 +45,7 @@ export default function LoginForm() {
 
       // Updates the state in the context API
       setUser(id);
-      router.push("/dashboard");
+      router.push("/");
     } catch (error) {
       if (error instanceof AxiosError) {
         console.log("Error in login page", error);
