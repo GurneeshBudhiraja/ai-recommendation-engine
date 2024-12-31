@@ -10,6 +10,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { LoginInfo } from "@/types/appwrite.types";
 import { useState } from "react";
 import { cn } from "@/lib/utils";
+import { useUserContext } from "@/app/context/contextProvider";
 
 export default function LoginForm() {
   const {
@@ -17,6 +18,7 @@ export default function LoginForm() {
     handleSubmit,
     formState: { errors },
   } = useForm<LoginInfo>();
+  const userContext = useUserContext();
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
@@ -39,7 +41,8 @@ export default function LoginForm() {
       if (!success) {
         setError(loginResponse.data.message);
       }
-      router.push("/dashboard");
+
+      router.refresh();
     } catch (error) {
       if (error instanceof AxiosError) {
         console.log("Error in login page", error);

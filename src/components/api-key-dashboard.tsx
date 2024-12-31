@@ -24,7 +24,7 @@ export default function ApiKeyDashboard() {
   const handleCreateApiKey = async (name: string) => {
     try {
       setLoading(true);
-      const userid = userContext?.$id;
+      const userid = userContext?.user?.$id;
       const response = await axios.post(
         "/api/v1/dashboard/key/generate",
         {
@@ -120,7 +120,7 @@ export default function ApiKeyDashboard() {
   }, []);
 
   useEffect(() => {
-    const userid = userContext?.$id;
+    const userid = userContext.user?.$id;
     getApiKeys(userid);
 
     // Cleanup function

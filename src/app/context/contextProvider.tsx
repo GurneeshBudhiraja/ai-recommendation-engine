@@ -9,12 +9,20 @@ import React, {
   useState,
 } from "react";
 
-const UserContext = createContext<Session | null>(null);
+// Define the shape of the UserContext value
+interface UserContextType {
+  user: Session | null;
+  setUser: React.Dispatch<React.SetStateAction<Session | null>>;
+}
+
+// Initialize UserContext with a default value
+const UserContext = createContext<UserContextType | undefined>(undefined);
 
 export default function ContextWrapper({ children }: { children: ReactNode }) {
-  const [loading, setLoading] = useState<boolean>(false);
+  const [user, setUser] = useState<Session | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+
   useEffect(() => {
-    // convert this function to a hook later on
     async function getLoggedInUser() {
       try {
         const currentUserResponse = await axios.get("/api/v1/auth/current/");
@@ -25,25 +33,28 @@ export default function ContextWrapper({ children }: { children: ReactNode }) {
         }
         setUser(currentUser.data);
       } catch (error) {
-        console.log("Error in contextProvider", error);
+        console.error("Error in ContextWrapper:", error);
         setUser(null);
       } finally {
         setLoading(false);
       }
     }
-    setLoading(true);
-    getLoggedInUser();
 
-    return () => {};
+    getLoggedInUser();
   }, []);
 
-  const [user, setUser] = useState<Session | null>(null);
+  if (loading) {
+    return <></>;
+  }
 
-  if (loading) return null;
-
-  return <UserContext.Provider value={user}>{children}</UserContext.Provider>;
+  return (
+    <UserContext.Provider value={{ user, setUser }}>
+      {children}
+    </UserContext.Provider>
+  );
 }
 
-export function useUserContext(): Session | null {
+// Custom hook to use UserContext
+export function useUserContext() {
   return useContext(UserContext);
 }
