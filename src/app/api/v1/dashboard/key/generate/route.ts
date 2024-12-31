@@ -26,7 +26,8 @@ export async function POST(request: NextRequest) {
     if (findDocResponse?.keys?.length === 3) {
       return NextResponse.json({
         success: false,
-        message: "You have reached the maximum limit of API keys."
+        message: "You have reached the maximum limit of API keys.",
+        data: findDocResponse.keys
       }, { status: 400 })
     }
 
@@ -46,10 +47,10 @@ export async function POST(request: NextRequest) {
       },
       { new: true, upsert: true }
     )
-    console.log(documentUpsertResponse);
     return NextResponse.json({
       success: true,
       message: "API key generated successfully",
+      data: documentUpsertResponse.keys,
     }, { status: 200 })
   } catch (err) {
     console.log(err)
