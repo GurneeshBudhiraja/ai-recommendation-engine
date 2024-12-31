@@ -35,7 +35,7 @@ export function ApiKeyItem({ apiKey, onDelete }: ApiKeyItemProps) {
   const copyToClipboard = () => {
     navigator.clipboard.writeText(apiKey.key);
   };
-
+  // Indiviual div to show the API information
   return (
     <div className="flex items-center justify-between p-4 bg-card rounded-lg border border-border">
       <div className="flex-grow">

@@ -1,11 +1,10 @@
 "use client";
 import { useCallback, useEffect, useState } from "react";
-import { DashboardLayout } from "@/components/dashboard-layout";
+import { DashboardHeader } from "@/components/dashboard-header";
 import { ApiKeyItem } from "@/components/api-key-item";
 import { CreateApiKeyDialog } from "@/components/create-api-key-dialog";
 import axios from "axios";
 import { useUserContext } from "@/app/context/contextProvider";
-import { useRouter } from "next/navigation";
 
 export interface ApiKey {
   id: string;
@@ -21,7 +20,6 @@ export default function ApiKeyDashboard() {
   const [searchTerm, setSearchTerm] = useState("");
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [loading, setLoading] = useState<boolean>(true);
-  const router = useRouter();
 
   const handleCreateApiKey = async (name: string) => {
     try {
@@ -44,9 +42,15 @@ export default function ApiKeyDashboard() {
       // removing the apiKeys state
       setApiKeys([]);
 
+      /*
+      Array to store the values of the apis in the local storage
+      */
+      const localStorageKeys: string[] = [];
+
       // @ts-expect-error "Value type is not defined"
       data.map((value) => {
         setCountAPI(data.length);
+        localStorageKeys.push(value.key);
         setApiKeys((prev) => {
           return [
             ...prev,
@@ -59,6 +63,7 @@ export default function ApiKeyDashboard() {
           ];
         });
       });
+      localStorage.setItem("keys", JSON.stringify(localStorageKeys));
       return;
     } catch (error) {
       console.log("Error while creating a new api key:", error);
@@ -68,11 +73,31 @@ export default function ApiKeyDashboard() {
     }
   };
 
-  // Deletes the api key
+  // Deletes the api key and updates the local storage with the new api values
   const handleDeleteApiKey = async (id: string) => {
     setCountAPI((prev) => prev - 1);
     setApiKeys(apiKeys.filter((key) => key.id !== id));
-    await axios.delete(`/api/v1/dashboard/key/remove?key=${id}`);
+    const updatedApiKeys = await axios.delete(
+      `/api/v1/dashboard/key/remove?key=${id}`
+    );
+    const { data } = updatedApiKeys.data;
+
+    // Array for API keys in local storage
+    const localStorageKeys: string[] = [];
+
+    // Removes all the keys from the local storage when keys/data is not present in the data object
+    if (!data?.keys) {
+      // Removes the key from local storage
+      localStorage.removeItem("keys");
+      return;
+    }
+
+    // TODO: add the types
+    // @ts-expect-error "Types not defined"
+    data.keys.map((value) => localStorageKeys.push(value.key));
+
+    // Updating the localStorage with new api values
+    localStorage.setItem("keys", JSON.stringify(localStorageKeys));
   };
 
   // Filters the api key based on the name
@@ -80,11 +105,19 @@ export default function ApiKeyDashboard() {
     key.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  // Get all the api keys from the db the user has created
+  // Get all the api keys from the db the user has created and update the local storage with the api key values
   const getApiKeys = useCallback(async (userid: string | undefined) => {
     try {
       if (!userid) return;
       setLoading(true);
+
+      /* Key value to be stored in the local storage for faster retrieval on other routes */
+
+      // Removes the existing keys
+      localStorage.removeItem("keys");
+      // Array of keys for the local storage
+      const localStorageKeys: string[] = [];
+
       const userApiKeysResponse = await axios.get(
         `/api/v1/dashboard/key?userid=${userid}`
       );
@@ -97,6 +130,11 @@ export default function ApiKeyDashboard() {
       setCountAPI(data.length);
       // @ts-expect-error "Value type is not defined"
       data.map((value) => {
+        /*
+        Appending the API key value into the array of keys(for local storage only)
+        */
+        localStorageKeys.push(value.key);
+
         setApiKeys((prev) => {
           return [
             ...prev,
@@ -109,6 +147,9 @@ export default function ApiKeyDashboard() {
           ];
         });
       });
+
+      /* Sets the local storage with api keys value */
+      localStorage.setItem("keys", JSON.stringify(localStorageKeys));
     } catch (error) {
       console.log("Error in getApiKeys", error);
       setApiKeys([]);
@@ -133,7 +174,7 @@ export default function ApiKeyDashboard() {
 
   return (
     <>
-      <DashboardLayout
+      <DashboardHeader
         onSearch={setSearchTerm}
         onCreateNew={() => setIsCreateDialogOpen(true)}
         countAPI={countAPI}
@@ -154,7 +195,7 @@ export default function ApiKeyDashboard() {
             </div>
           )}
         </div>
-      </DashboardLayout>
+      </DashboardHeader>
       <CreateApiKeyDialog
         isOpen={isCreateDialogOpen}
         onClose={() => setIsCreateDialogOpen(false)}
