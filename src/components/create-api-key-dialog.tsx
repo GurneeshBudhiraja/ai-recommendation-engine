@@ -15,7 +15,7 @@ import {
 interface CreateApiKeyDialogProps {
   isOpen: boolean;
   onClose: () => void;
-  onCreate: (name: string, userid: string) => void;
+  onCreate: (name: string) => void;
 }
 
 export function CreateApiKeyDialog({
@@ -27,7 +27,7 @@ export function CreateApiKeyDialog({
 
   const handleCreate = () => {
     if (newKeyName.trim()) {
-      onCreate(newKeyName, "testingUser1");
+      onCreate(newKeyName);
       setNewKeyName("");
     }
   };

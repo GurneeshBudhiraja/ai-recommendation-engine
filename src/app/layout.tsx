@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { inter } from "./fonts";
 import "./globals.css";
 import { cn } from "@/lib/utils";
+import ContextWrapper from "./context/contextProvider";
 
 export const metadata: Metadata = {
   title: "AI Recommendations",
@@ -16,7 +17,7 @@ export default async function RootLayout({
   return (
     <html lang="en">
       <body className={cn("dark antialiased box-border", inter.className)}>
-        {children}
+        <ContextWrapper>{children}</ContextWrapper>
       </body>
     </html>
   );
