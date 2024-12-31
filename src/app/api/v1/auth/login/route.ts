@@ -22,7 +22,7 @@ export async function POST(request: NextRequest) {
       }, { status: 401, statusText: "Invalid email or password" })
     }
     // session id and expiry of the session
-    const { secret, expire } = session;
+    const { secret, expire, userId: id } = session;
 
     const cookieStore = await cookies();
     // sets the cookies
@@ -36,6 +36,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({
       success: true,
       message: "Logged in successfully.",
+      id,
     }, { status: 200, })
   } catch (error) {
     if (error instanceof Error) {

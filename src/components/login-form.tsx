@@ -18,7 +18,8 @@ export default function LoginForm() {
     handleSubmit,
     formState: { errors },
   } = useForm<LoginInfo>();
-  const userContext = useUserContext();
+  // eslint-disable-next-line
+  const { user, setUser } = useUserContext();
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
@@ -37,20 +38,22 @@ export default function LoginForm() {
           },
         }
       );
-      const { success } = loginResponse.data;
+      const { success, id } = loginResponse.data;
       if (!success) {
         setError(loginResponse.data.message);
       }
 
-      router.refresh();
+      // Updates the state in the context API
+      setUser(id);
+      router.push("/dashboard");
     } catch (error) {
       if (error instanceof AxiosError) {
         console.log("Error in login page", error);
         setError(error.response?.data.message);
       }
     } finally {
-      setLoading(false);
       router.refresh();
+      setLoading(false);
     }
   }
 
