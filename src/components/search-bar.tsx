@@ -27,7 +27,10 @@ function SearchBar({
       {aiSearch && (
         <div
           className="absolute right-5 top-5 cursor-pointer hover:bg-gray-200 p-3 rounded-full transition-colors duration-200 ease-in-out "
-          onClick={() => setAISearch(!aiSearch)}
+          onClick={() => {
+            setSearchTerm("");
+            setAISearch(!aiSearch);
+          }}
         >
           <X size={18} />
         </div>
@@ -39,7 +42,7 @@ function SearchBar({
       >
         <div
           className={cn(
-            "w-2/3 relative p-px bg-gradient-to-tr from-red-300 to-blue-400 rounded-full drop-shadow-[1px_1px_1px_#ffedd5] ",
+            "w-2/3 relative p-px bg-gradient-to-tr from-red-300 to-blue-400 rounded-full drop-shadow-[1px_1px_1px_#ffedd5]",
             {
               "w-3/4": aiSearch,
             }
@@ -82,7 +85,10 @@ function SearchBar({
             )}
             {/* Ai search icon */}
             <span
-              onClick={() => setAISearch(!aiSearch)}
+              onClick={() => {
+                setSearchTerm("");
+                setAISearch(!aiSearch);
+              }}
               className={cn(
                 " rounded-full p-2 hover:bg-gray-400/15 transition-colors ease-in-out duration-200 inline-flex gap-2",
                 { "bg-gray-400/25  ": aiSearch }
