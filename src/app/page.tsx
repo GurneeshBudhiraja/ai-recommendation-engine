@@ -7,6 +7,7 @@ import { ProductGrid } from "@/components/product-grid";
 import HomeHeaderActions from "@/components/home-header-actions";
 import SearchBar from "@/components/search-bar";
 import { cn } from "@/lib/utils";
+import AISearchBar from "@/components/ai-search-bar";
 
 const Home = () => {
   const [selectedCategory, setSelectedCategory] = useState("furniture");
@@ -29,12 +30,36 @@ const Home = () => {
             <HomeHeaderActions />
           </div>
 
-          <SearchBar
-            searchTerm={searchTerm}
-            setSearchTerm={setSearchTerm}
-            aiSearch={aiSearch}
-            setAISearch={setAISearch}
-          />
+          {/* When the aiSearch is off */}
+          {!aiSearch ? (
+            <SearchBar
+              searchTerm={searchTerm}
+              setSearchTerm={setSearchTerm}
+              aiSearch={aiSearch}
+              setAISearch={setAISearch}
+            />
+          ) : (
+            <div
+              className={cn("w-full", {
+                "fixed flex inset-0 items-center justify-center z-50 ":
+                  aiSearch,
+              })}
+            >
+              <div
+                className={cn("w-full max-w-2xl", {
+                  "h-2/3 bg-white rounded-3xl border border-gray-300 shadow-lg p-6 flex ":
+                    aiSearch,
+                })}
+              >
+                <AISearchBar
+                  searchTerm={searchTerm}
+                  setSearchTerm={setSearchTerm}
+                  aiSearch={aiSearch}
+                  setAISearch={setAISearch}
+                />
+              </div>
+            </div>
+          )}
           {selectedCategory === "furniture" && (
             <FurnitureTopBar
               selectedSubcategory={selectedSubcategory}
