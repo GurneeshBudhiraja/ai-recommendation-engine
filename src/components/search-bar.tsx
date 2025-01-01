@@ -62,13 +62,23 @@ function SearchBar({
           >
             {/* File icon */}
             {aiSearch && (
-              <span
-                className={cn(
-                  "cursor-pointer rounded-full p-2 hover:bg-gray-400/15 transition-colors ease-in-out duration-200 inline-flex gap-2"
-                )}
-              >
-                <Paperclip />
-              </span>
+              <div className="relative">
+                <input
+                  type="file"
+                  id="file-upload"
+                  className="hidden"
+                  onChange={(e) => selectFile(e)} // Use onChange for file selection
+                  accept="image/*" // Only accept images
+                />
+                <label
+                  htmlFor="file-upload"
+                  className={cn(
+                    "cursor-pointer rounded-full p-2 hover:bg-gray-400/15 transition-colors ease-in-out duration-200 inline-flex gap-2"
+                  )}
+                >
+                  <Paperclip />
+                </label>
+              </div>
             )}
             {/* Ai search icon */}
             <span
@@ -82,10 +92,21 @@ function SearchBar({
             </span>
           </div>
         </div>
-        {!aiSearch && <Button variant="outline" className="h-full">Search</Button>}
+        {!aiSearch && (
+          <Button variant="outline" className="h-full">
+            Search
+          </Button>
+        )}
       </div>
     </div>
   );
 }
+
+const selectFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+  if (e.target.files) {
+    console.log(e.target.files[0]);
+  }
+  return;
+};
 
 export default SearchBar;
