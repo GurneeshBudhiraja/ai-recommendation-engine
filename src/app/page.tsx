@@ -1,17 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
 import { Sidebar } from "@/components/sidebar";
 import { FurnitureTopBar } from "@/components/furniture-top-bar";
 import { ProductGrid } from "@/components/product-grid";
 import HomeHeaderActions from "@/components/home-header-actions";
+import SearchBar from "@/components/search-bar";
+import { cn } from "@/lib/utils";
 
 const Home = () => {
   const [selectedCategory, setSelectedCategory] = useState("furniture");
   const [selectedSubcategory, setSelectedSubcategory] = useState("all");
   const [searchTerm, setSearchTerm] = useState("");
+  const [aiSearch, setAISearch] = useState<boolean>(false);
 
   return (
     <div className="flex h-screen bg-gray-50 font-light">
@@ -20,23 +21,20 @@ const Home = () => {
         setSelectedCategory={setSelectedCategory}
       />
       <div className="flex-1 overflow-auto">
-        <div className="p-8 ">
+        <div className="p-8 relative">
           <div className="inline-flex justify-between items-start  w-full ">
             <h1 className="text-4xl font-extralight mb-8 text-gray-800">
               Elegant Living
             </h1>
             <HomeHeaderActions />
           </div>
-          <div className="mb-6 flex items-center">
-            <Input
-              type="text"
-              placeholder="Search products..."
-              className="mr-2 bg-white"
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-            />
-            <Button variant="outline">Search</Button>
-          </div>
+
+          <SearchBar
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+            aiSearch={aiSearch}
+            setAISearch={setAISearch}
+          />
           {selectedCategory === "furniture" && (
             <FurnitureTopBar
               selectedSubcategory={selectedSubcategory}
@@ -46,7 +44,10 @@ const Home = () => {
           <ProductGrid
             category={selectedCategory}
             subcategory={selectedSubcategory}
-            searchTerm={searchTerm}
+            searchTerm={!aiSearch ? searchTerm : ""}
+            className={cn("transition-opacity ease-in-out duration-200", {
+              "opacity-50": aiSearch,
+            })}
           />
         </div>
       </div>

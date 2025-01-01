@@ -7,6 +7,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 
 interface Product {
   id: number;
@@ -21,6 +22,7 @@ interface ProductGridProps {
   category: string;
   subcategory: string;
   searchTerm: string;
+  className?: string;
 }
 
 const products: Product[] = [
@@ -122,6 +124,7 @@ export const ProductGrid = ({
   category,
   subcategory,
   searchTerm,
+  className,
 }: ProductGridProps) => {
   const filteredProducts = products.filter((product) => {
     const categoryMatch = product.category === category;
@@ -136,7 +139,12 @@ export const ProductGrid = ({
   });
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+    <div
+      className={cn(
+        "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 ",
+        className
+      )}
+    >
       {filteredProducts.map((product) => (
         <Card key={product.id} className="overflow-hidden">
           <Image
