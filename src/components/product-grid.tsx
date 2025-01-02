@@ -152,7 +152,7 @@ export const ProductGrid = ({
             alt={product.name}
             width={300}
             height={200}
-            className="w-full h-48 object-cover"
+            className="w-full  object-cover"
           />
           <CardHeader>
             <CardTitle className="font-light text-xl">{product.name}</CardTitle>

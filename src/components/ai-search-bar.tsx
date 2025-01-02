@@ -109,7 +109,7 @@ const AISearchBar: React.FC<SearchBarProps> = ({
               onClick={async () => {
                 if (uploadedFile) {
                   const base64String = await imageToBase64(uploadedFile);
-                  console.log(base64String.split(",")[1]);
+                  console.log(base64String);
                 }
               }}
             >
