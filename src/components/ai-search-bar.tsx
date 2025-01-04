@@ -41,7 +41,7 @@ const AISearchBar: React.FC<SearchBarProps> = ({
   };
 
   return (
-    <div className="relative w-full ">
+    <div className="relative w-full  ">
       {aiSearch && (
         <>
           <Button
@@ -78,8 +78,9 @@ const AISearchBar: React.FC<SearchBarProps> = ({
           <Input
             type="text"
             placeholder="Search products..."
+            autoFocus={true}
             className={cn(
-              "bg-gray-50 focus-visible:ring-0 rounded-full font-medium tracking-wide w-full py-6"
+              "bg-gray-50 rounded-full font-medium tracking-wide w-full py-6 focus-visible:ring-0"
             )}
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}

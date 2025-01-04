@@ -1,8 +1,8 @@
 import { Button } from "@/components/ui/button";
 
 interface SidebarProps {
-  selectedCategory: string;
-  setSelectedCategory: (category: string) => void;
+  selectedCategory: "Sofa" | "Wardrobe" | "Painting";
+  setSelectedCategory: (category: "Sofa" | "Wardrobe" | "Painting") => void;
 }
 
 export const Sidebar = ({
@@ -16,18 +16,25 @@ export const Sidebar = ({
       </h2>
       <div className="space-y-2">
         <Button
-          variant={selectedCategory === "furniture" ? "default" : "ghost"}
+          variant={selectedCategory === "Sofa" ? "default" : "ghost"}
           className="w-full justify-start font-light"
-          onClick={() => setSelectedCategory("furniture")}
+          onClick={() => setSelectedCategory("Sofa")}
         >
-          Furniture
+          Sofa
         </Button>
         <Button
-          variant={selectedCategory === "paintings" ? "default" : "ghost"}
+          variant={selectedCategory === "Wardrobe" ? "default" : "ghost"}
           className="w-full justify-start font-light"
-          onClick={() => setSelectedCategory("paintings")}
+          onClick={() => setSelectedCategory("Wardrobe")}
         >
-          Paintings
+          Wardrobe
+        </Button>
+        <Button
+          variant={selectedCategory === "Painting" ? "default" : "ghost"}
+          className="w-full justify-start font-light"
+          onClick={() => setSelectedCategory("Painting")}
+        >
+          Painting
         </Button>
       </div>
     </div>

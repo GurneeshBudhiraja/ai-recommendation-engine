@@ -3,6 +3,7 @@ import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import BrainIcon from "../../public/brain-icon";
 import { cn } from "@/lib/utils";
+import { useUserContext } from "@/app/context/contextProvider";
 interface SearchBarProps {
   searchTerm: string;
   aiSearch: boolean;
@@ -16,6 +17,7 @@ function SearchBar({
   setAISearch,
   aiSearch,
 }: SearchBarProps) {
+  const userContext = useUserContext();
   return (
     <div className={cn("mb-6 flex items-center justify-center gap-3 w-full")}>
       <div
@@ -32,25 +34,27 @@ function SearchBar({
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
-        <div
-          className={cn(
-            "absolute right-5 top-1/2 -translate-y-1/2 cursor-pointer inline-flex gap-2"
-          )}
-        >
-          {/* Ai search icon */}
-          <span
-            onClick={() => {
-              setSearchTerm("");
-              setAISearch(!aiSearch);
-            }}
+        {userContext.user && (
+          <div
             className={cn(
-              " rounded-full p-2 hover:bg-gray-400/15 transition-colors ease-in-out duration-200 inline-flex gap-2",
-              { "bg-gray-400/25  ": aiSearch }
+              "absolute right-5 top-1/2 -translate-y-1/2 cursor-pointer inline-flex gap-2"
             )}
           >
-            <BrainIcon />
-          </span>
-        </div>
+            {/* Ai search icon */}
+            <span
+              onClick={() => {
+                setSearchTerm("");
+                setAISearch(!aiSearch);
+              }}
+              className={cn(
+                " rounded-full p-2 hover:bg-gray-400/15 transition-colors ease-in-out duration-200 inline-flex gap-2",
+                { "bg-gray-400/25  ": aiSearch }
+              )}
+            >
+              <BrainIcon />
+            </span>
+          </div>
+        )}
       </div>
       <Button variant="outline" className="h-full">
         Search

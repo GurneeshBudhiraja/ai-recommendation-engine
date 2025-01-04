@@ -11,7 +11,7 @@ export async function GET(request: NextRequest) {
     const queryParams = request.nextUrl.searchParams
     const cursor = queryParams.get("cursor") || ""
     const furnitureType = queryParams.get("type") || ""
-    const limit = Number(queryParams.get("limit")) || 5
+    const limit = Number(queryParams.get("limit")) || 9
 
     const query: Query = { furnitureType }
     if (cursor) {
@@ -19,15 +19,16 @@ export async function GET(request: NextRequest) {
     }
 
     const dbImageResponse = await DbImage.find(query).limit(limit)
-    const prevCursor = cursor && dbImageResponse.length > 0 ? dbImageResponse[0]._id : ""
     const nextCursor = dbImageResponse.length > 0 ? dbImageResponse[dbImageResponse.length - 1]._id : ""
     return NextResponse.json({
       success: true,
-      prevCursor,
-      nextCursor,
-      data: dbImageResponse
-
-    }, { status: 200, })
+      cursor: nextCursor,
+      data: dbImageResponse,
+    }, {
+      status: 200, headers: {
+        "Cache-Control": "max-age=120"
+      }
+    })
 
   } catch (error) {
     console.log("Error in items route:", error)
